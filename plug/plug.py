@@ -6,10 +6,10 @@ import wiringpi
 # Initialize WiringPi
 wiringpi.wiringPiSetupGpio()
 
-relay1 = 17
-relay2 = 18
-relay3 = 15
-relay4 = 14
+relay1 = 23
+relay2 = 22
+relay3 = 27
+relay4 = 17
 
 wiringpi.pinMode(relay1,1)
 wiringpi.pinMode(relay2,1)
