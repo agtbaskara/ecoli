@@ -21,17 +21,17 @@ wiringpi.digitalWrite(relay3,1)
 wiringpi.digitalWrite(relay4,1)
 
 serverurl = 'http://192.168.43.29:8080/getstatus'
-myId1 = 123
-myId2 = 456
+myId1 = 1
+myId2 = 2
 
 while True:
     try:
-        r = requests.post(serverurl, data={"plugId": str(myId1)})
+        r = requests.post(serverurl, data={"plugid": str(myId1)})
         getdata = r.json()
-        if(getdata["plugStatus"] == "on"):
+        if(getdata["plugstatus"] == "ON"):
             print("Plug 1 On")
             wiringpi.digitalWrite(relay1,0)
-        elif(getdata["plugStatus"] == "off"):
+        elif(getdata["plugstatus"] == "OFF"):
             print("Plug 1 Off")
             wiringpi.digitalWrite(relay1,1)
         else:
@@ -42,12 +42,12 @@ while True:
     time.sleep(0.1)
 
     try:
-        r = requests.post(serverurl, data={"plugId": str(myId2)})
+        r = requests.post(serverurl, data={"plugid": str(myId2)})
         getdata = r.json()
-        if(getdata["plugStatus"] == "on"):
+        if(getdata["plugstatus"] == "ON"):
             print("Plug 2 On")
             wiringpi.digitalWrite(relay2,0)
-        elif(getdata["plugStatus"] == "off"):
+        elif(getdata["plugstatus"] == "OFF"):
             print("Plug 2 Off")
             wiringpi.digitalWrite(relay2,1)
         else:
