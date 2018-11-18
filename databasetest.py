@@ -64,14 +64,16 @@ def login(conn, username, password):
     cur.execute("SELECT username FROM user WHERE username= ?", data)
     if not cur.fetchone():
         print("Login Error: Username Not Exist")
+        return False
     else:
         data = (username,)
         cur.execute("SELECT password FROM user WHERE username= ?", data)
         if password == str(cur.fetchone()[0]):
             print("Welcome", username)
-            return(username)
+            return True
         else:
             print("Login Error: Password Wrong")
+            return False
 
 def register_user(conn, username, password, nik):
     cur = conn.cursor()
@@ -79,6 +81,7 @@ def register_user(conn, username, password, nik):
     cur.execute("SELECT username FROM user WHERE username= ?", data)
     if cur.fetchone():
         print("Register Error: Username Exist")
+        return False
     else:
         data = (username,password, nik)
         conn.execute("INSERT INTO user (username, password, nik) VALUES (?,?,?)", data)
@@ -86,6 +89,7 @@ def register_user(conn, username, password, nik):
         data = (username,)
         cur.execute("SELECT username FROM user WHERE username= ?", data)
         print(cur.fetchone()[0])
+        return True
 
 def register_plug(conn, plug_id, lokasi, kapasitas):
     cur = conn.cursor()
@@ -93,6 +97,7 @@ def register_plug(conn, plug_id, lokasi, kapasitas):
     cur.execute("SELECT plug_id FROM plug WHERE plug_id= ?", data)
     if cur.fetchone():
         print("Register Error: Plug Already Exist")
+        return False
     else:
         data = (plug_id,lokasi,kapasitas)
         conn.execute("INSERT INTO plug (plug_id, lokasi, kapasitas) VALUES (?,?,?)", data)
@@ -100,24 +105,27 @@ def register_plug(conn, plug_id, lokasi, kapasitas):
         data = (plug_id,)
         cur.execute("SELECT plug_id FROM plug WHERE plug_id= ?", data)
         print(cur.fetchone()[0])
+        return True
 
 def isi_saldo(conn, username, saldo):
     data = (saldo, username)
     conn.execute("UPDATE user SET saldo = saldo + ? WHERE username = ?", data)
     conn.commit()
+    return True
 
 def sewa_plug(conn, username, plug_id, durasi):
     data = (datetime.datetime.now(),username, plug_id, durasi)
     conn.execute("INSERT INTO transaksi (timestamp, username, plug_id, durasi)\
                  VALUES (?,?,?,?)", data)
     conn.commit()
+    return True
 
 def check_plug(conn, plug_id):
     cur = conn.cursor()
     data = (plug_id,)
     cur.execute("SELECT status_plug FROM transaksi WHERE plug_id= ? ORDER BY trans_id DESC", data)
     if not cur.fetchone():
-        print("Check Error: Transaction Not Exist")
+        #print("Check Error: Transaction Not Exist")
         return("OFF")
     else:
         data = (plug_id,)
@@ -140,8 +148,68 @@ def check_plug(conn, plug_id):
 if __name__ == '__main__':
     database = "example.db"
     conn = create_connection(database)
-
     initialize_database(conn)
+
+    while True:
+        print("eColi CLI Prototype")
+        print("1. Login")
+        print("2. Register")
+        print("3. Quit")
+        pilihan = input("Pilih : ")
+        if pilihan == "1":
+            while True:
+                print("Login")
+                username = input("Username : ")
+                password = input("Password : ")
+                success = login(conn, username, password)
+                if success:
+                    while True:
+                        print("eColi CLI Prototype")
+                        print("1. Sewa Plug")
+                        print("2. Register Plug")
+                        print("3. Quit")
+                        pilihan = input("Pilih : ")
+                        if pilihan == "1":
+                            while True:
+                                print("Sewa Plug")
+                                plugid = input("Plug ID : ")
+                                durasi = input("Durasi (Menit) : ")
+                                success = sewa_plug(conn,username,plugid,durasi)
+                                if success:
+                                    break
+                        if pilihan == "2":
+                            while True:
+                                print("Register Plug")
+                                plugid = input("Plug ID : ")
+                                lokasi = input("Lokasi : ")
+                                kapasitas = input("Kapasitas (Kwh) : ")
+                                success = register_plug(conn, plugid, lokasi, kapasitas)
+                                if success:
+                                    break
+                        if pilihan == "3":
+                            print("Isi Saldo")
+                                saldo = input("Saldo : ")
+                                sucess = isi_saldo(conn, username, saldo)
+                                if success:
+                                    break
+                        if pilihan == "4":
+                            break
+                        else:
+                            print("Error")
+        elif pilihan == "2":
+            while True:
+                print("Register")
+                username = input("Username : ")
+                password = input("Password : ")
+                nik = input("NIK : ")
+                success = register_user(conn, username, password, nik)
+                if success:
+                    break
+        elif pilihan == "3":
+            quit()
+        else:
+            print("Error")
+    '''
     register_user(conn, "Anjing", "pass", 123456)
     register_plug(conn, 69, "UGM", 100)
 
@@ -154,4 +222,4 @@ if __name__ == '__main__':
     while check_plug(conn, 69) == "ON":
         time.sleep(1)
     print(check_plug(conn, 69))
-
+    '''
