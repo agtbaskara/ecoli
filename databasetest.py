@@ -212,6 +212,7 @@ config = {'/':
     'tools.staticdir.dir': os.path.abspath(".")}
 }
 cherrypy.tree.mount(server(), '/', config=config)
+cherrypy.log.screen = False
 cherrypy.config.update({'server.socket_host': '0.0.0.0'})
 cherrypy.engine.start()
 
