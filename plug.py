@@ -30,6 +30,7 @@ plug_b_status = "NO STATUS"
 while True:
     os.system('clear')
     print("eColi CLI Prototype - Plug Side")
+    print("Server URL :", serverurl)
     print("Plug 1 Status :", plug_a_status)
     print("Plug 2 Status :", plug_b_status)
 

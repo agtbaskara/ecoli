@@ -176,7 +176,7 @@ def plug_checker(plugid):
     """
     Function to check plug status every 1 second
     """
-    database = "example.db"
+    database = "database.db"
     conn = create_connection(database)
     while check_plug(conn, plugid) == "ON":
         time.sleep(1)
@@ -192,7 +192,7 @@ class server(object):
     @cherrypy.tools.json_out()
     def getstatus(self, plugid):
 
-        database = "example.db"
+        database = "database.db"
         conn = create_connection(database)
 
         data = {
@@ -225,7 +225,7 @@ register_plug(conn, 2, "TESTPLUG-2", 1000)
 
 while True:
     os.system('clear')
-    print("eColi CLI Prototype")
+    print("eColi CLI Prototype - Server Side")
     print("1. Login")
     print("2. Register")
     print("3. Quit")
