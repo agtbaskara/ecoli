@@ -153,7 +153,6 @@ def check_plug(conn, plug_id):
     data = (plug_id,)
     cur.execute("SELECT status_plug FROM transaksi WHERE plug_id= ? ORDER BY trans_id DESC", data)
     if not cur.fetchone():
-        #print("Check Error: Transaction Not Exist")
         return("OFF")
     else:
         data = (plug_id,)
@@ -172,21 +171,10 @@ def check_plug(conn, plug_id):
             cur.execute("SELECT status_plug FROM transaksi WHERE plug_id= ? ORDER BY trans_id DESC", data)
             return(cur.fetchone()[0])
 
-def plug_checker(plugid):
-    """
-    Function to check plug status every 1 second
-    """
-    database = "database.db"
-    conn = create_connection(database)
-    while check_plug(conn, plugid) == "ON":
-        time.sleep(1)
-    print("Plug", plugid, "is OFF")
-    conn.close()
-
 class server(object):
     @cherrypy.expose
     def index(self):
-        return "eColi Prototype Server"
+        return "eColi Prototype Server - Please Use CLI"
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -218,14 +206,14 @@ database = "database.db"
 conn = create_connection(database)
 initialize_database(conn)
 
-register_user(conn, "admin", "admin", 123456)
+register_user(conn, "admin", "admin", 11223344)
 isi_saldo(conn, "admin", 20000)
 register_plug(conn, 1, "TESTPLUG-1", 1000)
 register_plug(conn, 2, "TESTPLUG-2", 1000)
 
 while True:
     os.system('clear')
-    print("eColi CLI Prototype - Server Side")
+    print("eColi CLI Prototype")
     print("1. Login")
     print("2. Register")
     print("3. Quit")
@@ -245,7 +233,7 @@ while True:
                     print("1. Sewa Plug")
                     print("2. Register Plug")
                     print("3. Isi Saldo")
-                    print("4. Quit")
+                    print("4. Logout")
                     pilihan = input("Pilih : ")
                     if pilihan == "1":
                         while True:
@@ -255,11 +243,9 @@ while True:
                             biayasewa = int(durasi)*250
                             print("Biaya Sewa:", biayasewa)
                             isi_saldo(conn, username, (-1*biayasewa))
-                            input("Lanjut")
                             success = sewa_plug(conn, username, plugid, int(durasi))
-                            if success:
-                                #Thread(target = plug_checker, args = (plugid)).start()
-                                break
+                            input("Back to Menu")
+                            break
                     if pilihan == "2":
                         while True:
                             print("Register Plug")
@@ -267,19 +253,21 @@ while True:
                             lokasi = input("Lokasi : ")
                             kapasitas = input("Kapasitas (Kwh) : ")
                             success = register_plug(conn, plugid, lokasi, kapasitas)
-                            if success:
-                                break
+                            input("Back to Menu")
+                            break
                     if pilihan == "3":
                         while True:
                             print("Isi Saldo")
                             saldo = input("Saldo : ")
                             success = isi_saldo(conn, username, saldo)
-                            if success:
-                                break
+                            input("Back to Menu")
+                            break
                     if pilihan == "4":
-                        quit()
+                        break
                     else:
                         print("Error")
+            input("Back to Menu")
+            break
     elif pilihan == "2":
         while True:
             print("Register")
@@ -290,6 +278,7 @@ while True:
             if success:
                 break
     elif pilihan == "3":
+        cherrypy.engine.stop()
         conn.close()
         quit()
     else:

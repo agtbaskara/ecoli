@@ -48,7 +48,7 @@ while True:
     except:
         plug_a_status = "CONNECTION ERROR"
 
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     try:
         r = requests.post(serverurl, data={"plugid": str(plug_b_id)})
@@ -64,4 +64,4 @@ while True:
     except:
         plug_b_status = "CONNECTION ERROR"
 
-    time.sleep(0.1)
+    time.sleep(0.5)
