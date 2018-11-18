@@ -1,13 +1,10 @@
 import sqlite3
+from sqlite3 import Error
+import cherrypy
 import datetime
 import time
 import os
-from threading import Thread
-from sqlite3 import Error
 
-import cherrypy
-import os
- 
 def create_connection(db_file):
     """
     Create a database connection to the SQLite database file
@@ -217,9 +214,14 @@ cherrypy.config.update({'server.socket_host': '0.0.0.0'})
 cherrypy.engine.start()
 
 # PROGRAM START FROM HERE
-database = "example.db"
+database = "database.db"
 conn = create_connection(database)
 initialize_database(conn)
+
+register_user(conn, "admin", "admin", 123456)
+isi_saldo(conn, "admin", 20000)
+register_plug(conn, 1, "TESTPLUG-1", 1000)
+register_plug(conn, 2, "TESTPLUG-2", 1000)
 
 while True:
     os.system('clear')
@@ -292,19 +294,3 @@ while True:
         quit()
     else:
         print("Error")
-
-'''
-register_user(conn, "admin", "admin", 123456)
-register_plug(conn, 1, "UGM-1", 1000)
-register_plug(conn, 2, "UGM-2", 1000)
-
-username=login(conn, "Anjing", "pass")
-print("Login", username)
-isi_saldo(conn, username, 1000)
-
-sewa_plug(conn,username,69,1)
-print(check_plug(conn, 69))
-while check_plug(conn, 69) == "ON":
-    time.sleep(1)
-print(check_plug(conn, 69))
-'''

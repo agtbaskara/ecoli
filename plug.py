@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+import os
 import wiringpi
 
 # Initialize WiringPi
@@ -21,38 +22,40 @@ wiringpi.digitalWrite(relay3, 1)
 wiringpi.digitalWrite(relay4, 1)
 
 serverurl = 'http://192.168.1.100:8080/getstatus'
-myId1 = 1
-myId2 = 2
+plug_a_id = 1
+plug_b_id = 2
 
 while True:
+    os.system('clear')
+    print("eColi CLI Prototype - Plug Program")
     try:
-        r = requests.post(serverurl, data={"plugid": str(myId1)})
+        r = requests.post(serverurl, data={"plugid": str(plug_a_id)})
         getdata = r.json()
         if(getdata["plugstatus"] == "ON"):
-            print("Plug 1 ON")
+            print("Plug 1 Status : ON")
             wiringpi.digitalWrite(relay1, 0)
         elif(getdata["plugstatus"] == "OFF"):
-            print("Plug 1 OFF")
+            print("Plug 1 Status : OFF")
             wiringpi.digitalWrite(relay1, 1)
         else:
-            print("Plug 1 No Status")
+            print("Plug 1 Status : No Status")
     except:
-        print("Plug 1 Connection Error")
+        print("Plug 1 Status : Connection Error")
 
     time.sleep(0.1)
 
     try:
-        r = requests.post(serverurl, data={"plugid": str(myId2)})
+        r = requests.post(serverurl, data={"plugid": str(plug_b_id)})
         getdata = r.json()
         if(getdata["plugstatus"] == "ON"):
-            print("Plug 2 ON")
-            wiringpi.digitalWrite(relay2, 0)
+            print("Plug 2 Status : ON")
+            wiringpi.digitalWrite(relay3, 0)
         elif(getdata["plugstatus"] == "OFF"):
-            print("Plug 2 OFF")
-            wiringpi.digitalWrite(relay2, 1)
+            print("Plug 2 Status : OFF")
+            wiringpi.digitalWrite(relay3, 1)
         else:
-            print("Plug 2 No Status")
+            print("Plug 2 Status : No Status")
     except:
-        print("Plug 2 Connection Error")
+        print("Plug 2 Status : Connection Error")
 
     time.sleep(0.1)
